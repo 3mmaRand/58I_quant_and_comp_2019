@@ -11,7 +11,7 @@ output:
     theme: yeti
   word_document: default
 ---
-![](../../pics/58I.png)
+![](../pics/58I.png)
 
 # Introduction
 
@@ -372,7 +372,7 @@ fig <- ggplot(biomsummary, aes(x=spray, y=biomass) ) +
 ### Fertilsers on crop yield
 The data in [yield.txt](../data/yield.txt) come from a two-factor design in which crop yield (in kilograms) was determined from plots treated with low and high levels of nitrogen and low and high levels of potassium. 
 
-![](../../pics/nk.png)
+![](../pics/nk.png)
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
@@ -404,7 +404,7 @@ shapiro.test(mod$res)
 
 A computational biologist is trying to design a program which makes _ab initio_ structure predictions for proteins (i.e., structure predictions from their amino acid sequence). She has developed three programs and in order to test how well they work, she has given them the amino acid sequences for a test set of 30 proteins for which the structure is actually known. She has then calculated the root mean square deviation (RMSD) between the structure predicted by each program and the actual,known structure. The RMSD is the measure of the average distance between the backbones of superimposed proteins and is expressed in $\unicode{x212B}$ngstrom ($\unicode{x212B}$). The lower the RMSD, the better the program has performed. 
 
-![](../../pics/predictschema.png)
+![](../pics/predictschema.png)
 
 She would like to know if there is a significant difference between her three programs.
 The data are given in [structurepred.txt](../data/structurepred.txt). Each row represents the RMSD for one of the sequences for one of the programs. The first column gives the myoglobin concentration and the second column indicates species.
@@ -588,6 +588,6 @@ A choice of examples drawn from all areas of the biosciences will allow you to h
 Assessment is through statistical and quantitative problem solving approaches related to Experimental Design and Bioscience Techniques.
 
 ## 
-![](../../pics/58Iend.png)
+![](../pics/58Iend.png)
 
 
