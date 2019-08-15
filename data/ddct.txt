@@ -1,0 +1,14 @@
+Ct	gene	treatment
+21.00	housekeeping	experimental
+20.50	housekeeping	experimental
+20.60	housekeeping	experimental
+20.00	housekeeping	control
+20.50	housekeeping	control
+20.30	housekeeping	control
+23.00	target	experimental
+22.00	target	experimental
+22.50	target	experimental
+26.00	target	control
+26.20	target	control
+26.40	target	control
+

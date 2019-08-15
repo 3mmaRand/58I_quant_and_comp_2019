@@ -1,0 +1,17 @@
+"symb" "survive" "died"
+"nosymbiont" 0 20
+"nosymbiont" 0 20
+"nosymbiont" 1 19
+"nosymbiont" 2 18
+"nosymbiont" 2 18
+"nosymbiont" 2 18
+"nosymbiont" 5 15
+"nosymbiont" 7 13
+"Regiella" 6 14
+"Regiella" 7 13
+"Regiella" 9 11
+"Regiella" 10 10
+"Regiella" 11 9
+"Regiella" 11 9
+"Regiella" 13 7
+"Regiella" 13 7
