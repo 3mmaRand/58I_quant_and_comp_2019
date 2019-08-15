@@ -1,0 +1,12 @@
+name: "lab-and-pro-skills-2-QC"
+navbar:
+  title: "Q&C"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "1. Linear Models"
+      href: about.html
+    - text: "2. Generalised Linear models"
+      href: workbook/QCworkshop1DataAnalysis.html
+    - text: "2. Generalised Linear models"
+      href: workbook/QCworkshop2DataAnalysis.html
