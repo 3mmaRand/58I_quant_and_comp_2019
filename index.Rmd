@@ -7,3 +7,33 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+# Overview
+some blurb
+
+# Contact time
+There is one lecture and 4 workshops. The lecture and the first three workshops are organised by Emma Rand.
+The forth workshop is organised by Jon Pictchford.
+
+## Session 1
+Lecture: Introduction to Generalised Linear Models 
+Slides: [html](slides/intro_to_glm.html), [pdf](slides/intro_to_glm.pdf), [Rmd](slides/intro_to_glm.Rmd)
+
+## Session 2
+Workshop 1: Linear Models
+T-tests, ANOVA and regression are used when we have a continuous response variable.
+We revisit these using a linear modelling framework. This means using a single function `lm()` rather than three different ones and enhancing our understanding of the concepts underlying the tests.
+Workshop: [html](workbook/QCworkshop1DataAnalysis.html), [Rmd](workbook/QCworkshop1DataAnalysis.Rmd)
+
+
+## Session 3
+Workshop 2: Generalised Linear Models
+We extend our knowledge of linear models by considering other types of response variable: counts (Poisson) and binary (binomial)
+Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
+
+
+## Session 3
+Workshop 3: Data visualisation
+Slides: [html](workbook/QCworkshop3DataViz.html), [Rmd](workbook/QCworkshop3DataViz.Rmd)
+
+
+W03 Jon Pitchford's special non-linear dynamic
