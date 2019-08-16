@@ -6,6 +6,7 @@ title: "Quantitative and Computational Skills Overview"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+![Q&Clogo](pics/58I.png)
 
 # Overview
 some blurb
@@ -26,14 +27,16 @@ Workshop: [html](workbook/QCworkshop1DataAnalysis.html), [Rmd](workbook/QCworksh
 
 
 ## Session 3
-Workshop 2: Generalised Linear Models
-We extend our knowledge of linear models by considering other types of response variable: counts (Poisson) and binary (binomial)
+Workshop 2: Generalised Linear Models for Poisson distributed data
+We extend our knowledge of linear models by considering other types of response variable: counts (Poisson).
 Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
 
 
-## Session 3
-Workshop 3: Data visualisation
-Slides: [html](workbook/QCworkshop3DataViz.html), [Rmd](workbook/QCworkshop3DataViz.Rmd)
-
+## Session 4
+Workshop 3: Generalised Linear Models for Binomially distributed data
+We extend our knowledge of linear models by considering other types of response variable: binary (binomial)
+Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
 
 W03 Jon Pitchford's special non-linear dynamic
+
+![Q&Clogo-with-ascii-bee](pics/58Iend.png)
