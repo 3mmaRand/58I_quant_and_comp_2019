@@ -8,16 +8,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ![Q&Clogo](pics/58I.png)
 
-# Overview
-some blurb
+# Learning Outcomes for 58I overall
+
+* To be able to generate a testable hypothesis.
+* To design and conduct experiments to test this hypothesis, with appropriate controls.
+* To have practical experience of a range of techniques relevant to the discipline.
+* To work effectively within a team.
+* To be able to write a scientific report based on practical work.
+* To communicate scientific information and ideas in the form of a variety of media to a variety of audiences.
+* To use appropriate graphical methods to produce data figures with appropriately detailed legends.
+* To use relevant statistical or other analytical methods to analyse data.
+* To research scientific literature in a given area, and write an extended and well-structured account.
+
+# Topics covered in Computational and Quantitative skills
+
+Impossible to cover everything to you might ever need!
+
+Different people will use different methods and tools.
+
+Chosen topics are: foundational, follow stage 1 well, widely applicable (in this module and beyond), transferable conceptually:
+
+* Generalised Linear Models: 
+* Non-linear Models (non-linear regression)
+
+Methods which are very specific to the Experimental Design / Bioscience Technique taken are covered in that option. Talk to your project leader.
+
 
 # Contact time
 There is one lecture and 4 workshops. The lecture and the first three workshops are organised by Emma Rand.
-The forth workshop is organised by Jon Pictchford.
+The fourth workshop is organised by Jon Pitchford.
 
 ## Session 1
 Lecture: Introduction to Generalised Linear Models 
-Slides: [html](slides/intro_to_glm.html), [pdf](slides/intro_to_glm.pdf), [Rmd](slides/intro_to_glm.Rmd)
+Slides: [googleslides](https://docs.google.com/presentation/d/1m0OKkkcL4nO8vgG6E7_FoOwijwIG3m8MqER99IdyUH0/edit#slide=id.g422a3599fd_0_84), [pdf](slides/introduction_2019.pdf), [pptx](slides/introduction_2019.pptx)
 
 ## Session 2
 Workshop 1: Linear Models
@@ -37,6 +60,7 @@ Workshop 3: Generalised Linear Models for Binomially distributed data
 We extend our knowledge of linear models by considering other types of response variable: binary (binomial)
 Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
 
-W03 Jon Pitchford's special non-linear dynamic
+## Session 5
+Workshop 4: Non-linear regression and dynamics (JWP)
 
 ![Q&Clogo-with-ascii-bee](pics/58Iend.png)
