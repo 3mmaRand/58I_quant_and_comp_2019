@@ -58,7 +58,7 @@ Workshop: [html](workbook/QCworkshop1DataAnalysis.html), [Rmd](workbook/QCworksh
 
 
 ## Session 3
-Workshop 2: Generalised Linear Models for Poisson distributed data
+Workshop 2: Generalised Linear Models for Poisson distributed data.
 We extend our knowledge of linear models by considering other types of response variable: counts (Poisson).
 Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
 
@@ -66,7 +66,7 @@ Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop
 ## Session 4
 Workshop 3: Generalised Linear Models for Binomially distributed data
 We extend our knowledge of linear models by considering other types of response variable: binary (binomial)
-Slides: [html](workbook/QCworkshop2DataAnalysis.html), [Rmd](workbook/QCworkshop2DataAnalysis.Rmd)
+Slides: [html](workbook/QCworkshop3DataAnalysis.html), [Rmd](workbook/QCworkshop3DataAnalysis.Rmd)
 
 ## Session 5
 Workshop 4: Non-linear regression and dynamics (JWP)

@@ -19,7 +19,7 @@ output:
 In the first of three related workshops we revisit tests you have seen previously such as _t_-tests and ANOVA but now in the framework of the General Linear Model.  We will learn to apply and interpret the lm() function.
 
 ## Objectives 
-By carrying out the Prior independent learning, working through workbook examples during the workshop workshop and completing follow-up independent study the successful student will be able to:
+By actively following the first lecture, working through workbook examples during the workshop workshop and any completing follow-up independent study the successful student will be able to:
 
 * Explain the the link between t-tests, ANOVA and regression
 * Appropriately apply linear models using `lm()`

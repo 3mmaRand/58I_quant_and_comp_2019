@@ -1,0 +1,241 @@
+---
+title:  "Generalised Linear Models for Binomially distributed data."
+author: "Emma Rand"
+output:
+  html_document:
+    toc: true
+    depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    theme: yeti
+  word_document: default
+---
+![](../pics/58I.png)
+
+  
+
+# Introduction
+
+## Aims
+In the third of three related workshops we will learn to apply and interpret the glm() function to binary (binomial) response data.
+
+## Objectives 
+By actively following the first lecture, working through workbook examples during the workshop workshop and any completing follow-up independent study the successful student will be able to:
+
+* Explain the link between the general linear models and the generalised linear model
+* Recognise where a generalised linear model for binomially distributed data would be appropriate and apply `glm()`
+* Determine which effects are significant using using `summary()` and `anova()`
+
+You can optionally stretch yourself by asking for more in-depth explanations about the meaning of the estimates, and the direction and magnitude of the effects or creating figures to go with your analyses. Biomedical Scientists might be particularly interested in binomial glm estimates ('odds ratios').
+
+# Prior Independent Learning
+
+
+# Workbook
+
+## About the Workbook
+
+The workbook for this session is divided in to 2 sections. 
+
+**You are not expected do all of the workbook examples**
+
+Choose **one** from each section that best matches your biological interests. For each example you choose, you should:
+
+* read in the data file, check you know the structure and can identify the response and explanatory variables
+* build a model with glm() using examples on the slides
+* examine the model with summary() and anova()
+* interpret the results
+
+Optional Extension: Practice your plotting skills.
+
+
+## Section 1
+
+**Choose one of:**
+
+----------------------------------------
+
+### Wolf Spiders
+
+This example concerns the effect of sand grain size on the presence of wolf spiders.
+Suzuki et al. (2006) measured sand grain size on 28 beaches in Japan and observed the presence or absence of the burrowing wolf spider _Lycosa ishikariana_ on each beach. The data are in [grainsize.txt](../data/grainsize.txt). Can you predict the presence of spiders from the sand grain size? 
+
+```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+#============== WORKBOOK EXAMPLE ==============#
+# The effect of sand grain size on the presence of wolf spiders
+#read in file
+grainsize <- read.table("../data/grainsize.txt",header=T)
+str(grainsize)
+#build and examine model. binary outcome so it is binomial
+mod <- glm(spiders ~ gsize,family = binomial, data = grainsize)
+summary(mod) 
+#the probability of spiders being present increases with sand grainsize
+anova(mod, test="Chisq")
+#there is a signifcant reduction in deviance when gsize is included as an explanatory variable
+exp(mod$coef)
+# to understand the results a bit better we can get the predict probabilities of advanced amd using
+#probabilites for gsize from 0 to 1 in steps of 0.1
+newdat <- data.frame(gsize = seq(0,1,0.1))
+newdat
+newdat$pr <- predict(mod, type = "response", newdata = newdat)
+newdat
+
+#this allows us to see how the probability of spiders being present increases with grain size.
+#note the the odds ratio seems huge because it is comparing odds at grain sizes of zero and 1 (i.e., per unit)
+
+#(0.9699368/(1-0.9699368))/(0.1614302/(1-0.1614302)) advanced for ref
+# plotting for ref
+library(ggplot2)
+grainsize$spiders<-as.numeric(grainsize$spiders)-1
+
+ggplot(grainsize, aes(x = gsize, y = spiders))+
+  geom_point() +
+  stat_smooth(method = "glm", method.args = list(family = "binomial"),
+  col="black",se=FALSE)
+
+
+#important: latest versions of ggplot you need method.args = list(family = "binomial")
+#older versions of ggplot just family = "binomial"
+```
+
+
+----------------------------------------
+
+### Oesophageal cancer
+
+This examples examines the effect of alcohol consumption on the incidence of oesophageal cancer in men over 55 years of age.
+Thirty men aged 55 years and over were survey for their alcohol consumption then followed up 10 years later for the occurrence of oesophageal cancer. The data are in [oesoph.txt](../data/oesoph.txt) and comprise two variables:
+
+* status : a variable which indicates whether the individual had developed oesophageal cancer (1) or not  (0)
+* alcohol :  the amount of alcohol consumed per week in grams
+
+
+```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+#============== WORKBOOK EXAMPLE ==============#
+# The effect of sand grain size on the presence of wolf spiders
+#read in file
+oesoph <- read.table("../data/oesoph.txt",header=T)
+str(oesoph)
+#build and examine model. binary outcome so it is binomial
+mod <- glm( status ~ alcohol, data = oesoph,family="binomial")
+summary(mod)
+#the probability of oesophageal cancer increases with alcohol
+anova(mod, test="Chisq")
+#there is a signifcant reduction in deviance when alcohol is included as an explanatory variable
+exp(mod$coef)
+# to understand the results a bit better we can get the predicted probabilities oesophageal cancer increases using predict()
+#probabilites for alcohol from 0 to 80 in steps of 10
+newdat<-data.frame(alcohol=seq(0,80,10))
+newdat
+newdat$pr<-predict(mod,type="response",newdata=newdat)
+newdat
+#this allows us to see how the probability increases with alcohol.
+
+#advanced for ref
+(0.006795236/(1-0.006795236)) # intercept
+(0.015739186/(1-0.015739186)) /(0.006795236/(1-0.006795236)) #slope^10 as odds are fat 0 and 10 grrams and slope is 0 to 1 grams
+1.088605775^10
+```
+
+## Section 2
+
+**Choose one of:**
+
+----------------------------------------
+
+### Age-related macular degeneration
+
+This example concerns the Progression of moderate age-related macular degeneration to advanced AMD.
+Age-related macular degeneration (AMD) is a deterioration the macula, a small area in the retina responsible for central vision. There is no cure and treatment is focused on slowing the progression of moderate AMD to advanced AMD and the resulting vision loss. There is variation in response a treatment called AREDS and in order to understand this, researchers determined a person's genotype,  their refined carbohydrate intake and whether they developed advanced AMD after 7 years of AREDS treatment. The data are in  [amd.txt](../data/amd.txt) and comprise the following variables:
+
+* aamd: whether or not an individual developed advanced AMD after 7 years (0 or 1)
+* HRC: a continuous measure of the amount of highly refined carbs (kg per day)
+* genotype: a factor with two levels,ARMS2 and CFH
+
+Each row is an individual
+
+```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+# The Progression of moderate age-related macular degeneration to advanced AMD
+# read in file
+amd <- read.table("../data/amd.txt",header=T)
+str(amd)
+
+#build and examine model. the repsonse is binary so it is binomial
+mod <- glm(data=amd,aamd~ HRC*alleles, family=binomial)
+summary(mod)
+exp(mod$coefficients)
+anova(mod, test="Chisq")
+#there is a sig efect of allele and sig effect of HRC but not interaction between them (so the effect of HRC is the same for both genotypes). As HRC increased risk of advanced amd increases; allele CFH carries a greater risk.
+#since the interaction is not sig we could drop it
+
+#mod2, without interaction
+mod2<-glm(data=amd,aamd~ HRC+alleles, family=binomial)
+anova(mod, mod2,test="Chisq") #confirms it
+summary(mod2)
+anova(mod2, test="Chisq")
+
+# to understand the results a bit better we can get the predict probabilities of advanced amd using
+#probabilites for each allele at HRC of 0, 0.5 and 1.0
+newdat<-data.frame(HRC=rep(seq(0,1,0.5),2),
+   alleles=rep(c("ARMS2","CFH"),each=3))
+newdat
+newdat$pr<-predict(mod2,type="response",newdata=newdat)
+newdat
+#this allows us to see that the risk of advanced amd if quite a bit higher for CFH
+
+ 
+```
+
+
+### Skin micro-organisms
+
+Human skin is colonised by a diverse collection of micro-organisms which vary considerably between individuals.  The presence or absence of a particular micro-organism on the skin of a number of individuals was determined along with variables which might influence presence. The data are in [microrg.txt](../data/microrg.txt) and comprise following variables:
+
+* melanin : a continuous measure of the concentration of melanin in the individual's skin determined by the SR method
+* age     : the individual's age in years (to one tenth of a year) 
+* presence: whether the micro-organism is absent (0) or present (1) on the individual's skin
+* gender  : female or male
+
+The goal of analysis was to determine if the presence of the micro-organism could be predicted from an individual's gender, melanin concentration or age.
+
+```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+#============== WORKBOOK EXAMPLE ==============#
+#Determinants of skin micro-organism presence
+#read in data
+micro <- read.table("../data/microrg.txt",header=T)
+str(micro)
+#build and examine model. the repsonse is binary so it is binomial
+   mod <- glm(data=micro,presence ~ gender*melanin*age, family=binomial)
+   summary(mod)
+   anova(mod,test="Chisq")
+# interpret the results
+# only gender and melanin are signifcant: the presence of microorganisms seems to be associated with lower melanin and male gender.
+   
+# More advanced: to understand the results a bit better we can get the predicted probabilities of presence for particular melanin and gender
+summary(micro$melanin)   
+newdat<-data.frame(melanin=rep(seq(0,12,2),2),
+           gender=rep(c("male","female"),each=7),
+                   age=mean(micro$age))
+newdat
+newdat$pr<-predict(mod,type="response",newdata=newdat)
+newdat
+#this allows us to see that the probabilities of presence are higher for low melanin at average age
+   #in reality we would likely simplify the model starting with removing the three-way interaction
+```
+
+
+# The Rmd file
+
+Suggested analyses and interpretation for Workbook examples are marked:
+
+`#============== WORKBOOK EXAMPLE ==============#` 
+
+
+[Rmd file](QCworkshop3DataAnalysis.Rmd)
+
+
+
+![](../pics/58Iend.png)
+
+
