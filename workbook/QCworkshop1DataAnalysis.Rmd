@@ -70,21 +70,47 @@ Adiponectin is exclusively secreted from adipose tissue and modulates a number o
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of nicotinic acid treatment on the adiponectin secretion of an adipocytes cell line
 
-# read in file
+# read in the data file
 adip <- read.table("../data/adipocytes.txt", header = T)
+
+# check you understand the structure of the data
 str(adip)
-#build and examine model
+
+# identify the response and explanatory variables
+# adiponectin is the response, treatment (control or nicotinic) is the one explanatory variable
+
+# build a model with `lm()`
 mod <- lm(adiponectin ~ treatment, data = adip)
+ 
+# examine the model result using `summary()` and `anova()`
 summary(mod)
-# interpret the results
-#the mean for the control is 5.5 +/- 0.42 and that for the nictinic acid treated cells is siginfcantly higher at 7.5
-#evaluate the model
-#this model explains 28% of the variation in the response. the different treatments account for 28% of the variance in adiponectin, the rest is unexplained (or random)
-#assumptions
+anova(mod)
+# this is the equivalent of a two sample t-test, i.e., one explanatory variable with two levels
+# so the p value for the 'slope' estimate = the p vlaue for the whole model as seen on the last line
+# of the summary() and the treatment effect given in the anova()
+
+# what are the group means?
+# the mean for the control is 5.5 +/- 0.42 and that for the 
+# nicotinic acid treated cells is siginfcantly higher at about 7.5
+
+# what does the `summary()` reveal about signifcant effects?
+# the control group has a mean sig diff from zero - probably not of interest; the gap between the
+# control group and the nicotinic group is significant
+# this model explains 28% of the variation in the response. 
+# the different treatments account for 28% of the variance in adiponectin, 
+# the rest is unexplained (or random)
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic
+
+# consider whether to do post-hoc testing with `glht()`
+# no need to do a post-hoc as there are only two groups and we already know
+# the difference between them is significant
+
+
 #a figure
 #summarise the data 
 library(Rmisc)
@@ -92,16 +118,19 @@ adipsummary <- summarySE(adip,
                          measurevar = "adiponectin",
                          groupvars = c("treatment"))
 library(ggplot2)
-fig <- ggplot(adipsummary, aes(x = treatment,y = adiponectin) ) +
-  geom_point() +
-  geom_errorbar(aes(ymin = adiponectin - se,
-                    ymax = adiponectin + se),
+fig <- ggplot(adip, aes(x = treatment,y = adiponectin) ) +
+  geom_jitter(width = 0.2, colour = "grey") +
+  geom_errorbar(data = adipsummary, aes(ymin = adiponectin,
+                    ymax = adiponectin),
                 width = .1) +
+  geom_errorbar(data = adipsummary, aes(ymin = adiponectin - se,
+                    ymax = adiponectin + se),
+                width = .2) +
   ylim(0, 10) +
   ylab("Adiponectin (pg/mL)") +
   xlab("Treatment") +
   scale_x_discrete(labels = c("Control", "Adiponectin")) +
-  theme_bw()
+  theme_classic()
 ```
 
 ----------------------------------------
@@ -111,38 +140,72 @@ fig <- ggplot(adipsummary, aes(x = treatment,y = adiponectin) ) +
 Some plant biotechnologists are trying to increase the quantity of omega 3 fatty acids in _Cannabis sativa_. They have developed a genetically modified line using genes from _Linum usitatissimum_ (linseed). They grow 50 wild type and fifty modified plants to maturity, collect the seeds and determine the amount of omega 3 fatty acids. The data are in [csativa.txt](../data/csativa.txt). Do you think their modification has been successful? 
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
-#============== WORKBOOK EXAMPLE ==============#
 # Comparison of genetically modified _Cannabis sativa_
-#read in file
-csativa <- read.table("../data/csativa.txt",header = T)
+
+# read in the data file
+csativa <- read.table("../data/csativa.txt", header = T)
+
+# check you understand the structure of the data
 str(csativa)
-#build and examine model
-mod <- lm(omega ~ plant,data = csativa)
+
+# identify the response and explanatory variables
+# adiponectin is the response, treatment (control or nicotinic) is the one explanatory variable
+
+# build a model with `lm()`
+mod <- lm(omega ~ plant, data = csativa)
+ 
+# examine the model result using `summary()` and `anova()`
 summary(mod)
-# interpret the results
-# the mean for the gm plant is 49.5 +/- 1.14 and that for the WT is siginfcantly higher at 54.6. that is not a successful modication
-#evaluate the model
-#this model explains 9% of the variation in the response. the whether a plant is WT or GM explains for 9% of the variance in omega 3, the rest is unexplained (or random)
-#assumptions
+anova(mod)
+# this is the equivalent of a two sample t-test, i.e., one explanatory variable with two levels
+# so the p value for the 'slope' estimate = the p vlaue for the whole model as seen on the last line
+# of the summary() and the treatment effect given in the anova()
+
+# what are the group means?
+# the mean for the gm plant is 49.5 +/- 1.14 
+# and that for the WT is siginfcantly higher at 54.6. that is not a successful modication
+
+# what does the `summary()` reveal about signifcant effects?
+# the WT group has a mean sig diff from zero - probably not of interest; the gap between the
+# WT group and the GMO group is significant
+# this model explains only ~10% of the variation in the response. 
+# the different treatments account for 10% of the variance in omega, 
+# the rest is unexplained (or random)
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
-# the residuals seem to be normally distributed. it doesn't look too bad but there does seem to be higher variance in WT. You might consider a Kruskal-Wallis a better choice
-#Knowledge beyond: there are other options to deal with this such as using Welch's correction to the denominator df, Weighted Least Squares, or to use ordinal logistic regression.
+# the residuals don't look too bad but there does seem to be higher variance in WT. 
+# You might consider a Kruskal-Wallis a better choice
 
-#a figure  
-csativasummary <- summarySE(csativa, measurevar = "omega", 
-                            groupvars = c("plant"))
-fig <- ggplot(csativasummary, aes(x = plant, y = omega) ) + 
-   geom_point() +
-   geom_errorbar(aes(ymin = omega - se,
-                     ymax = omega + se),
-                 width = .1) + 
-   xlab("Plant type") +
-   ylab("Amount of Omega 3 (units)") +
-   ylim(0, 60) +
-   scale_x_discrete(labels = c("Modified", "Wild Type")) +
-   theme_bw()
+# consider whether to do post-hoc testing with `glht()`
+# no need to do a post-hoc as there are only two groups and we already know
+# the difference between them is significant
+
+
+#a figure
+#summarise the data 
+library(Rmisc)
+csativasummary <- summarySE(csativa,
+                         measurevar = "omega",
+                         groupvars = c("plant"))
+library(ggplot2)
+fig <- ggplot(csativa, aes(x = plant, y = omega) ) +
+  geom_jitter(width = 0.2, colour = "grey") +
+  geom_errorbar(data = csativasummary, aes(ymin = omega,
+                                           ymax = omega),
+                width = .1) +
+  geom_errorbar(data = csativasummary, aes(ymin = omega - se,
+                                           ymax = omega + se),
+                width = .2) +
+  xlab("Plant type") +
+  ylab("Amount of Omega 3 (units)") +
+  ylim(0, 60) +
+  scale_x_discrete(labels = c("Modified", "Wild Type")) +
+  theme_classic()
+
+
 ```
 
 ----------------------------------------
@@ -154,7 +217,7 @@ The data in [wasp.txt](../data/wasp.txt) concern the egg-laying behaviour of a s
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of fertilisation on the length of time it takes a female parasitic wasp to lay her eggs
-#read in file
+# read in file
 wasp <- read.table("../data/wasp.txt", header = T)
 str(wasp)
 #notice the status is not a factor and needs to be
@@ -176,13 +239,14 @@ shapiro.test(mod$res)
 waspsummary  <-  summarySE(wasp, measurevar = "time", 
                            groupvars = c("status"))
 #plot
-fig <- ggplot(waspsummary, aes(x = status, y = time) ) + 
-  geom_point() +
-  geom_errorbar(aes(ymin = time-se, ymax = time+se), width = .1) + 
+fig <- ggplot(wasp, aes(x = status, y = time) ) + 
+  geom_jitter(width = 0.2, colour= "gray") +
+  geom_errorbar(data= waspsummary, aes(ymin = time - se, ymax = time + se), width = .2) + 
+  geom_errorbar(data= waspsummary, aes(ymin = time, ymax = time), width = .1) + 
   ylab("Time to lay (hours)") +
   xlab("Female") +
   scale_x_discrete(labels = c("Mated", "Unmated")) + 
-  theme_bw()
+  theme_classic()
 
 ```
 
