@@ -21,7 +21,7 @@ In the first of three related workshops we revisit tests you have seen previousl
 ## Objectives 
 By actively following the first lecture, working through workbook examples during the workshop workshop and any completing follow-up independent study the successful student will be able to:
 
-* Explain the the link between t-tests, ANOVA and regression
+* Explain the link between t-tests, ANOVA and regression
 * Appropriately apply linear models using `lm()`
 * Interpret the results using `summary()` and `anova()` and relate them to the outputs of `t.test()` and `aov()`
 
@@ -38,14 +38,16 @@ Choose **one** (or two, if keen) from each section that best matches your biolog
 
 For each example you choose:
 
+* write comments in your scripts!
 * read in the data file
-* check you know the structure
-* identify the response and explanatory variable
+* check you understand the structure of the data
+* identify the response and explanatory variables
 * build a model with `lm()`
-* examine the model result using `summary()`
+* examine the model result using `summary()` and `anova()`
 * what are the group means?
 * what does the `summary()` reveal about signifcant effects?
 * use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
+* consider whether to do post-hoc testing with `glht()`
 
 
 Optional Extension: Practice your plotting skills.
@@ -65,9 +67,10 @@ This example is about the effect of nicotinic acid treatment on the adiponectin 
 Adiponectin is exclusively secreted from adipose tissue and modulates a number of metabolic processes. Nicotinic acid can affect adiponectin secretion. 3T3-L1 adipocytes were treated with nicotinic acid or with a control treatment and adiponectin concentration (pg/mL) measured. The data are in [adipocytes.txt](../data/adipocytes.txt). Each row represents an independent sample of adipocytes and the first column gives the concentration adiponectin and the second column indicates whether they were treated with nicotinic acid or not.
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
-    #============== WORKBOOK EXAMPLE ==============#
-    # The effect of nicotinic acid treatment on the adiponectin secretion of an adipocytes cell line
-    #read in file
+#============== WORKBOOK EXAMPLE ==============#
+# The effect of nicotinic acid treatment on the adiponectin secretion of an adipocytes cell line
+
+# read in file
 adip <- read.table("../data/adipocytes.txt", header = T)
 str(adip)
 #build and examine model

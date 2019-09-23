@@ -7,7 +7,6 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Emma Rand" />
@@ -106,6 +105,8 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
+webkit-border-radius: 6px;
+moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -133,14 +134,9 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
+
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
-}
-.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
-text-indent: 50px;
-}
-.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
-text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -544,13 +540,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "html": self.html()
+            "text": self.text()
 
           }));
 
         } else {
 
-          item.html(self.html());
+          item.text(self.text());
 
         }
 
@@ -1455,9 +1451,48 @@ summary {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -1506,6 +1541,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -1562,9 +1599,9 @@ div.tocify {
 </div>
 <div id="objectives" class="section level2">
 <h2>Objectives</h2>
-<p>By carrying out the Prior independent learning, working through workbook examples during the workshop workshop and completing follow-up independent study the successful student will be able to:</p>
+<p>By actively following the first lecture, working through workbook examples during the workshop workshop and any completing follow-up independent study the successful student will be able to:</p>
 <ul>
-<li>Explain the the link between t-tests, ANOVA and regression</li>
+<li>Explain the link between t-tests, ANOVA and regression</li>
 <li>Appropriately apply linear models using <code>lm()</code></li>
 <li>Interpret the results using <code>summary()</code> and <code>anova()</code> and relate them to the outputs of <code>t.test()</code> and <code>aov()</code></li>
 </ul>
@@ -1578,14 +1615,16 @@ div.tocify {
 <p>Choose <strong>one</strong> (or two, if keen) from each section that best matches your biological interests.</p>
 <p>For each example you choose:</p>
 <ul>
+<li>write comments in your scripts!</li>
 <li>read in the data file</li>
-<li>check you know the structure</li>
-<li>identify the response and explanatory variable</li>
+<li>check you understand the structure of the data</li>
+<li>identify the response and explanatory variables</li>
 <li>build a model with <code>lm()</code></li>
-<li>examine the model result using <code>summary()</code></li>
+<li>examine the model result using <code>summary()</code> and <code>anova()</code></li>
 <li>what are the group means?</li>
 <li>what does the <code>summary()</code> reveal about signifcant effects?</li>
 <li>use <code>plot(mod, which = 1)</code> and <code>plot(mod, which = 2)</code> to examine the assumptions</li>
+<li>consider whether to do post-hoc testing with <code>glht()</code></li>
 </ul>
 <p>Optional Extension: Practice your plotting skills.</p>
 </div>
@@ -1697,49 +1736,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = false;
-    options.smoothScroll = false;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
