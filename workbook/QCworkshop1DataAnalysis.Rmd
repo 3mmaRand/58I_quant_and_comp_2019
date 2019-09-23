@@ -220,7 +220,7 @@ The data in [wasp.txt](../data/wasp.txt) concern the egg-laying behaviour of a s
 # read in file
 wasp <- read.table("../data/wasp.txt", header = T)
 str(wasp)
-#notice the status is not a factor and needs to be
+# notice the status is not a factor and needs to be
 wasp$status <- factor(wasp$status)
   
 #build and examine model
@@ -262,26 +262,57 @@ The myoglobin concentration of skeletal muscle of three species of seal in grams
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
-#Myoglobin concentration in skeletal muscle of different seal species
+# Myoglobin concentration in skeletal muscle of different seal species
+
+# read in the data file
 seal <- read.table("../data/seal.txt", header = T)
+
+# check you understand the structure of the data
 str(seal)
-#build and examine model
+
+# identify the response and explanatory variables
+# myoglobin is the response, species (three levels) is the one explanatory variable
+
+# build a model with `lm()`
 mod <- lm(myoglobin ~ species, data = seal)
+ 
+# examine the model result using `summary()` and `anova()`
 summary(mod)
-# interpret the results
-#then mean for bladdernose is 42.32 +/- 1.47 that for harbour is signifcantly higher at 49.01. weddell is higher than bladdernose at 44.66, but nor signicantly so
-#evaluate the model
-#this model explains 10.1% of the variation in the response. the different seal species account for 10.1% of the variance in myoglobin, the rest is unexplained (or random)
-#anova on the model
 anova(mod)
-#assumptions
+# this is the equivalent of a one-way anova, i.e., one explanatory variable with three levels
+# so there are two p value for the two 'slope' estimates which are not equal to the p value
+# for the whole model as seen on the last line of the summary()
+# p value # for the whole model as seen on the last line of the summary() = the species effect given in the anova()
+
+# what are the group means?
+# then mean +/- se for bladdernose is 42.32 +/- 1.47 
+# that for harbour is signifcantly higher at 49.01 (which is 42.32 with 6.69 added). 
+# weddell is higher than bladdernose at 44.66 (which is 42.32 with 2.34 added), but not signicantly so
+
+# what does the `summary()` reveal about signifcant effects?
+# # this model explains 10.1% of the variation in the response. 
+# the different seal species account for 10.1% of the variance in myoglobin, 
+# the rest is unexplained (or random)
+
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic
-#a figure
-#post-hoc from previous practical 06C / 08C
-sealsummary <- summarySE(seal, measurevar = "myoglobin", groupvars = c("species"))
+
+# consider whether to do post-hoc testing with `glht()`
+# we need a post hoc to see if the difference between harbour and weddell is sig
+# the summary only coompares each level to the intercept
+library(multcomp)
+post <- glht(mod, linfct = mcp(species = "Tukey"))
+summary(post)
+# the only difference lies between bladdernose and harbour
+
+
+# figure
+sealsummary <- summarySE(seal, 
+                         measurevar = "myoglobin", groupvars = c("species"))
 fig <- ggplot(seal, aes(x = species, y = myoglobin) ) +
   geom_jitter(width = .2, colour = "#8c8c8c") +
   geom_errorbar(data = sealsummary, 
@@ -316,30 +347,62 @@ fig <- ggplot(seal, aes(x = species, y = myoglobin) ) +
 
 ### Comparing standardization Methods
 
-Researchers measure concentration of long-chain hydrocarbons, in a single unknown sample by three methods of standardisation using gas chromatography. They wish to determine whether the three standardisations methods give the same concentrations. The data are given in [analyte.txt](../data/analyte.txt) and the first column gives the analyte concentration determined in parts per million and the second column indicates the standardisations method 'standard', 'internal standard' or 'standard addition'
-Addition)
+Researchers measure concentration of long-chain hydrocarbons, in a single unknown sample by three methods of standardisation using gas chromatography. They wish to determine whether the three standardisations methods give the same concentrations. The data are given in [analyte.txt](../data/analyte.txt) and the first column gives the analyte concentration determined in parts per million and the second column indicates the standardisations method 'standard', 'internal standard' or 'standard addition'.
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
-#Comparison of Three Standardization Methods
+# Comparison of Three Standardization Methods
+
+# read in the data file
 analyte <- read.table("../data/analyte.txt", header = T)
+
+# check you understand the structure of the data
 str(analyte)
-#build and examine model
+
+# identify the response and explanatory variables
+# ppm is the response, method (three levels) is the one explanatory variable
+
+# build a model with `lm()`
 mod <- lm(ppm ~ method, data = analyte)
+ 
+# examine the model result using `summary()` and `anova()`
 summary(mod)
-# interpret the results
-#the mean for internal_standard is 170.42 +/- 2.761 that for standard is higher but not siginifcantly so. standard_additional is  signifcantly lower than standard_internal
-#evaluate the model
-#this model explains 90% of the variation in the response. the different methods account for 90% of the variance in ppm, the rest is unexplained (or random)
-#anova on the model
 anova(mod)
-#assumptions
+# this is the equivalent of a one-way anova, i.e., one explanatory variable with three levels
+# so there are two p value for the two 'slope' estimates which are not equal to the p value
+# for the whole model as seen on the last line of the summary()
+# p value # for the whole model as seen on the last line of the summary() = the method effect given in the anova()
+
+# what are the group means?
+# the mean +/- se for internal_standard is 170.42 +/- 2.761,
+# that for standard is higher (4.5 higher) but not siginifcantly so. 
+# standard_additional is signifcantly lower (27.37 lower) than standard_internal
+
+# what does the `summary()` reveal about signifcant effects?
+# # this model explains 90% of the variation in the response. 
+# the different methods account for 90% of the variance in ppm, 
+# the rest is unexplained (or random)
+
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
 # small samples but the residuals seem to be normally distributed and be homoscedastic
-# figure - would need post-hoc results on
-analytesummary <- summarySE(analyte, measurevar = "ppm", groupvars = c("method"))
+
+# consider whether to do post-hoc testing with `glht()`
+# we need a post hoc to see if the difference between harbour and weddell is sig
+# the summary only coompares each level to the intercept
+library(multcomp)
+post <- glht(mod, linfct = mcp(method = "Tukey"))
+summary(post)
+# standard_addition is sig lower than both the others
+
+# figure 
+analytesummary <- summarySE(analyte, 
+                            measurevar = "ppm", 
+                            groupvars = c("method"))
+
 fig <- ggplot(analyte, aes(x = method, y = ppm) ) +
   geom_jitter(width = .2, colour = "#8c8c8c") +
   geom_errorbar(data = analytesummary, 
@@ -350,10 +413,34 @@ fig <- ggplot(analyte, aes(x = method, y = ppm) ) +
                 aes(ymin = ppm - se, 
                     ymax = ppm + se), 
                 width = .3 ) +
-  ylab("ppm" ) +
+  annotate("segment", x = 1, xend = 3, 
+           y = 200, yend = 200,
+           colour = "black") +
+  annotate("segment", x = 3, xend = 3, 
+           y = 200, yend = 195,
+           colour = "black") +
+  annotate("segment", x = 1, xend = 1, 
+           y = 200, yend = 195,
+           colour = "black") +
+  annotate("text", x = 2,  y = 205, 
+           label = "***", size = 5) +
+  annotate("segment", x = 2, xend = 3, 
+           y = 190, yend = 190,
+           colour = "black") +
+  annotate("segment", x = 2, xend = 2, 
+           y = 190, yend = 185,
+           colour = "black") +
+  annotate("segment", x = 3, xend = 3, 
+           y = 190, yend = 185,
+           colour = "black") +
+  annotate("text", x = 2.5,  y = 195, 
+           label = "***", size = 5) +
+  ylab("PPM" ) +
   ylim(0, 220) +
   xlab("method") +
-  scale_x_discrete(labels = c("Internal Standard", "Standard", "Standard addition"))+
+  scale_x_discrete(labels = c("Internal Standard", 
+                              "Standard", 
+                              "Standard addition"))+
   theme(panel.background = element_rect(fill = "white"))+
   theme(axis.line.x = element_line(color = "black"),
         axis.line.y = element_line(color = "black"))
@@ -393,21 +480,19 @@ summary(mod)
 # anova on the model
 anova(mod)
 
-
-
-
-#assumptions
+# assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic 
-#figure
-#post-hoc from previous practical 06C / 08C
-#or could use
+
+#post-hoc 
 library(multcomp)
 
 comp <- glht(mod, linfct = mcp(spray = "Tukey"))
 print(summary(comp))
+
+# figure
 biomsummary <- summarySE(biom, measurevar = "biomass",
                              groupvars = c("spray"))
 
@@ -426,7 +511,7 @@ fig <- ggplot(biomsummary, aes(x = spray, y = biomass) ) +
   annotate("text", x = 2, y = 60, label = "C") +
   annotate("text", x = 3, y = 60, label = "C") +
   annotate("text", x = 1, y = 60, label = "C") +
-  theme_bw()
+  theme_classic()
 #    Figure 1. The mean pest biomass following various insecticide treatments. Error bars are $\pm$ 1 S.E. and means that do not differ significantly are labelled with the letter.
 ```
 
@@ -508,7 +593,7 @@ These are few more complex examples which the especially keen would be able to t
 
 ### Response to cancer treatment
 
-This exanple concerns the effect of patient genotype and their glutathione concentration on their sensitivity to cytoxic drugs.
+This example concerns the effect of patient genotype and their glutathione concentration on their sensitivity to cytoxic drugs.
 Patients vary in their response to cancer treatment. This may be because sensitivity to cytotoxic (anti-cancer) drugs is influenced by genotype. However, glutathione (GSH) concentration is also implicated in treatment sensitivity. Researchers measure treatment sensitivity and GSH concentration for patients that had one of three alleles ("A2","AA01","B34"). The data are in [response.txt](../data/response.txt) and comprise the following variables:
 
 * GSH: a continuous measure glutathione concentration
