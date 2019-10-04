@@ -669,7 +669,7 @@ Suggested analyses and interpretation for more advanced examples are marked:
 `#============== MORE ADVANCED EXAMPLES ==============#` 
 
 
-[Rmd file](QCworkshop2DataAnalysis.Rmd)
+[Rmd file](QCworkshop1DataAnalysis.Rmd)
 
 
 ![](../pics/58Iend.png)
