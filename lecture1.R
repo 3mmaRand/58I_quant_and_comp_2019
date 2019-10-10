@@ -1,6 +1,7 @@
 library(tidyverse)
 library(multcomp)
 library(Rmisc)
+library(lsmeans)
 
 stag <- read.table("../data/stag.txt", header = TRUE)
 mod <- lm(data = stag, mand ~ jh)
@@ -38,8 +39,14 @@ anova(mod1)
 # anova(mod1, mod2)
 
 # posthoc
-post <- glht(mod1, linfct = mcp(medium = "Tukey"))
-print(summary(post))
+library(lsmeans)
+
+post <- lsmeans(mod1, ~ medium)
+pairs(post)
 
 plot(mod1)
 shapiro.test(mod1$residuals)
+
+butter <- read.table("data/butterf.txt", header = TRUE)
+mod <- lm(data = butter, winglen ~ sex * spp)
+pairs(lsmeans(mod, ~ sexspp))

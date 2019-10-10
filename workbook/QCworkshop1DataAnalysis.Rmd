@@ -12,6 +12,12 @@ output:
   word_document: default
 ---
 ![](../pics/58I.png)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      include = FALSE)
+```
 
 # Introduction
 
@@ -47,7 +53,7 @@ For each example you choose:
 * what are the group means?
 * what does the `summary()` reveal about signifcant effects?
 * use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
-* consider whether to do post-hoc testing with `glht()`
+* consider whether to do post-hoc testing with `lsmeans()` and `pairs()`
 
 
 Optional Extension: Practice your plotting skills.
@@ -66,7 +72,7 @@ Optional Extension: Practice your plotting skills.
 This example is about the effect of nicotinic acid treatment on the adiponectin secretion of an adipocytes cell line.
 Adiponectin is exclusively secreted from adipose tissue and modulates a number of metabolic processes. Nicotinic acid can affect adiponectin secretion. 3T3-L1 adipocytes were treated with nicotinic acid or with a control treatment and adiponectin concentration (pg/mL) measured. The data are in [adipocytes.txt](../data/adipocytes.txt). Each row represents an independent sample of adipocytes and the first column gives the concentration adiponectin and the second column indicates whether they were treated with nicotinic acid or not.
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r }
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of nicotinic acid treatment on the adiponectin secretion of an adipocytes cell line
 
@@ -106,7 +112,7 @@ plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic
 
-# consider whether to do post-hoc testing with `glht()`
+# consider whether to do post-hoc testing with `lsmeans()` and `pairs()` 
 # no need to do a post-hoc as there are only two groups and we already know
 # the difference between them is significant
 
@@ -139,7 +145,7 @@ fig <- ggplot(adip, aes(x = treatment,y = adiponectin) ) +
 
 Some plant biotechnologists are trying to increase the quantity of omega 3 fatty acids in _Cannabis sativa_. They have developed a genetically modified line using genes from _Linum usitatissimum_ (linseed). They grow 50 wild type and fifty modified plants to maturity, collect the seeds and determine the amount of omega 3 fatty acids. The data are in [csativa.txt](../data/csativa.txt). Do you think their modification has been successful? 
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 # Comparison of genetically modified _Cannabis sativa_
 
 # read in the data file
@@ -179,7 +185,7 @@ shapiro.test(mod$res)
 # the residuals don't look too bad but there does seem to be higher variance in WT. 
 # You might consider a Kruskal-Wallis a better choice
 
-# consider whether to do post-hoc testing with `glht()`
+# consider whether to do post-hoc testing with `lsmeans()` and `pairs()`
 # no need to do a post-hoc as there are only two groups and we already know
 # the difference between them is significant
 
@@ -214,7 +220,7 @@ fig <- ggplot(csativa, aes(x = plant, y = omega) ) +
 
 The data in [wasp.txt](../data/wasp.txt) concern the egg-laying behaviour of a species of parasitic wasp, laying its eggs on a beetle larva. Wasps and other Hymenopterans (Ants and Bees) are haplo-diploid: unfertilised eggs are haploid and develop into males, whereas fertilised eggs are diploid and develop into females. Researchers wanted to know if mating status affected the time the wasp takes to lay its eggs (in hours). Each row represents an individual wasp. The first column gives the time taken and the second column indicates whether they are mated (1) or unmated (0). 
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of fertilisation on the length of time it takes a female parasitic wasp to lay her eggs
 # read in file
@@ -230,6 +236,11 @@ summary(mod)
 #the mean for the unmated is 23.367 +/- 1.749 and that for the mated  is siginfcantly lower at 23.4
 #evaluate the model
 #this model explains 15% of the variation in the response. whether the eggs are fertilisaed or not accounts for 15% of the variance in laying time, the rest is unexplained (or random)
+#
+# consider whether to do post-hoc testing with `lsmeans()` and `pairs()`
+# no need to do a post-hoc as there are only two groups and we already know
+# the difference between them is significant
+#
 #assumptions
 plot(mod, which = 2)
 plot(mod, which = 1)
@@ -260,7 +271,7 @@ fig <- ggplot(wasp, aes(x = status, y = time) ) +
 
 The myoglobin concentration of skeletal muscle of three species of seal in grams per kilogram of muscle was determined and the data are given in [seal.txt](../data/seal.txt). We want to know if there is a difference between species.  Each row represents an individual seal. The first column gives the myoglobin concentration and the second column indicates species
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 # Myoglobin concentration in skeletal muscle of different seal species
 
@@ -284,13 +295,11 @@ anova(mod)
 # for the whole model as seen on the last line of the summary()
 # p value # for the whole model as seen on the last line of the summary() = the species effect given in the anova()
 
-# what are the group means?
+# what are the group means? what does the `summary()` reveal about signifcant effects?
 # then mean +/- se for bladdernose is 42.32 +/- 1.47 
 # that for harbour is signifcantly higher at 49.01 (which is 42.32 with 6.69 added). 
 # weddell is higher than bladdernose at 44.66 (which is 42.32 with 2.34 added), but not signicantly so
-
-# what does the `summary()` reveal about signifcant effects?
-# # this model explains 10.1% of the variation in the response. 
+# this model explains 10.1% of the variation in the response. 
 # the different seal species account for 10.1% of the variance in myoglobin, 
 # the rest is unexplained (or random)
 
@@ -301,12 +310,12 @@ plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic
 
-# consider whether to do post-hoc testing with `glht()`
+# consider whether to do post-hoc testing with `lsmeans()` and `pairs()`
 # we need a post hoc to see if the difference between harbour and weddell is sig
 # the summary only coompares each level to the intercept
-library(multcomp)
-post <- glht(mod, linfct = mcp(species = "Tukey"))
-summary(post)
+library(lsmeans)
+post <- lsmeans(mod, ~ species)
+pairs(post)
 # the only difference lies between bladdernose and harbour
 
 
@@ -349,7 +358,7 @@ fig <- ggplot(seal, aes(x = species, y = myoglobin) ) +
 
 Researchers measure concentration of long-chain hydrocarbons, in a single unknown sample by three methods of standardisation using gas chromatography. They wish to determine whether the three standardisations methods give the same concentrations. The data are given in [analyte.txt](../data/analyte.txt) and the first column gives the analyte concentration determined in parts per million and the second column indicates the standardisations method 'standard', 'internal standard' or 'standard addition'.
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 # Comparison of Three Standardization Methods
 
@@ -390,12 +399,12 @@ plot(mod, which = 1)
 shapiro.test(mod$res)
 # small samples but the residuals seem to be normally distributed and be homoscedastic
 
-# consider whether to do post-hoc testing with `glht()`
+# consider whether to do post-hoc testing with `lsmeans()` and `pairs()` 
 # we need a post hoc to see if the difference between harbour and weddell is sig
 # the summary only coompares each level to the intercept
-library(multcomp)
-post <- glht(mod, linfct = mcp(method = "Tukey"))
-summary(post)
+library(lsmeans)
+post <- lsmeans(mod, ~ method)
+pairs(post)
 # standard_addition is sig lower than both the others
 
 # figure 
@@ -453,7 +462,7 @@ fig <- ggplot(analyte, aes(x = method, y = ppm) ) +
 The data in [biomass.txt](../data/biomass.txt) are taken from an experiment in which the biomass (g) of insect pest species was measured on plots sprayed with different insecticides. The intention was to determine which insecticide was most effective. This example is slightly more challenging.
 
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 # insect biomass with different insecticide treatments
 biom <- read.table("../data/biomass.txt", header = T)
@@ -486,11 +495,11 @@ plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic 
 
-#post-hoc 
-library(multcomp)
+# post-hoc 
+library(lsmeans)
 
-comp <- glht(mod, linfct = mcp(spray = "Tukey"))
-print(summary(comp))
+post <- lsmeans(mod, ~ spray)
+pairs(post)
 
 # figure
 biomsummary <- summarySE(biom, measurevar = "biomass",
@@ -526,7 +535,7 @@ The data in [yield.txt](../data/yield.txt) come from a two-factor design in whic
 
 ![](../pics/nk.png)
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 
 #read in file
@@ -548,6 +557,13 @@ plot(mod, which = 2)
 plot(mod, which = 1)
 shapiro.test(mod$res)
 # the residuals seem to be normally distributed and be homoscedastic
+# 
+# post-hoc 
+library(lsmeans)
+
+post <- lsmeans(mod, ~ nitrogen * potassium)
+pairs(post)
+
 ```
 
 ----------------------------------------
@@ -557,7 +573,7 @@ shapiro.test(mod$res)
 This example concerns the effect of maternal choline deficiency on neuron cross sectional area in two brain regions in Mice.
 Postnatal cognitive performance is influenced by the choline intake in utero. To better understand this phenomenon, pregnant mice were fed a control or choline-deficient diet and their offspring examined. The cross sectional area (CSA) of cholinergic neurons was determined in two brain regions, the MSN and the DB. The data are given in [neuronregion.txt](../data/neuronregion.txt)
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of maternal choline deficiency on neuron cross sectional area in two brain regions in Mice
 #read in file
@@ -581,6 +597,9 @@ plot(mod, which = 1)
 shapiro.test(mod$res)
 #the residuals seem to be normally distributed and be homoscedastic 
 
+# post hoc
+post <- lsmeans(mod, ~ BrainRegion * Diet)
+pairs(post)
 
 ```
 
@@ -600,7 +619,7 @@ Patients vary in their response to cancer treatment. This may be because sensiti
 * sens: a continuous measure of treatment sensitivity in arbitrary units
 * genotype: a factor with three levels,A2, AA01 and B34
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== MORE ADVANCED EXAMPLES ==============#
 # The effect of genotype and glutathione concentration on sensitivity to cytoxic drugs
 #In the workbook examples, you had one categorical explanatory variable or two. You've also previously done example with one continuous explnatory variable (regression). However, in the example, one of the explanatory variables is categories and one is continuous.
@@ -638,7 +657,7 @@ Replicated plots of clover were grown in one of three rotations, 2-, 4-, or 8-ye
 * yarrow.s: a (practically) continuous measure of yarrow stem density in arbitrary units
 * cycle: a factor with three levels,A, B and C
 
-```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
+```{r}
 #============== MORE ADVANCED EXAMPLES ==============#
 # The effect of varying rotation period on clover yield when the impact of yarrow density is included.
 #In the workbook examples, you had one categorical explanatory variable or two. You've also previously done example with one continuous explnatory variable (regression). However, in the example, one of the explanatory variables is categories and one is continuous.
