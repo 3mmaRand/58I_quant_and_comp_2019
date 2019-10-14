@@ -1381,7 +1381,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1571,27 +1570,30 @@ div.tocify {
 <p>You can optionally stretch yourself by asking for more in-depth explanations about the meaning of the estimates, and the direction and magnitude of the effects or creating figures to go with your analyses.</p>
 </div>
 </div>
-<div id="prior-independent-learning" class="section level1">
-<h1>Prior Independent Learning</h1>
-</div>
-<div id="workbook" class="section level1">
-<h1>Workbook</h1>
-<div id="about-the-workbook" class="section level2">
-<h2>About the Workbook</h2>
+<div id="workbook-instructions" class="section level1">
+<h1>Workbook Instructions</h1>
 <p>The workbook for this session is divided in to 2 sections.</p>
 <p><strong>You are not expected do all of the workbook examples</strong></p>
 <p>Choose <strong>one</strong> from each section that best matches your biological interests. For each example you choose, you should:</p>
 <ul>
-<li>read in the data file, check you know the structure and can identify the response and explanatory variables</li>
-<li>build a model with glm() using examples on the slides</li>
-<li>examine the model with summary() and anova()</li>
-<li>interpret the results</li>
+<li>write comments in your scripts!</li>
+<li>read in the data file</li>
+<li>check you understand the structure of the data</li>
+<li>identify the response and explanatory variables</li>
+<li>build a model with <code>glm()</code></li>
+<li>examine the model result using <code>summary()</code> and <code>anova()</code></li>
+<li>what are the model estimates?</li>
+<li>interpret the results<br />
+</li>
+<li>use <code>plot(mod, which = 1)</code> and <code>plot(mod, which = 2)</code> to examine the assumptions</li>
 </ul>
 <p>Optional Extension: Practice your plotting skills.</p>
 </div>
+<div id="workbook" class="section level1">
+<h1>Workbook</h1>
 <div id="section-1" class="section level2">
 <h2>Section 1</h2>
-<p><strong>Choose one of:</strong></p>
+<p><strong>Choose one of the following examples</strong></p>
 <div id="parkinsons-disease" class="section level3">
 <h3>Parkinson’s disease</h3>
 <p>This example examines the progression of Parkinson’s disease in flies with a Parkinson’s disease-associated mutation. The effect of age on locomoter ability of flies with a Parkinson’s disease-associated mutation was determined by using a climbing assay. Ten flies of each tested age were placed in 3 replicate vials and the number able to climb to a set height within set time was recorded. The data in are <a href="../data/park.txt">park.txt</a> and the ages are given in days. Each row is a vial. Can you predict the number of mutant flies able to climb by their age?</p>
@@ -1605,7 +1607,7 @@ div.tocify {
 </div>
 <div id="section-2" class="section level2">
 <h2>Section 2</h2>
-<p><strong>Choose one of:</strong></p>
+<p><strong>Choose one of the following examples</strong></p>
 <div id="number-of-mutations" class="section level3">
 <h3>Number of mutations</h3>
 <p>This example is about how the number of mutations in a hypermutable tetranucleotide marker is affected by a person’s age and whether of not they have cancer. The number of mutations in the hypermutable tetranucleotide marker D7S1482 were analysed in buccal specimens from 30 head and neck carcinoma cases and 43 controls. Also recorded was the subject’s age (in years). The goal of analysis was to determine whether age and cancer status could predict the number of mutations. The data are in <a href="../data/mutation.txt">mutation.txt</a> and comprise the following variables:</p>
@@ -1618,12 +1620,11 @@ div.tocify {
 </div>
 <div id="birds-catching-insects" class="section level3">
 <h3>Birds catching insects</h3>
-<p>This example considers the effects of age, habitat type and group size on the ability of birds to catch insects. The number of insect prey individuals of a particular bird species manages to collect varies. In an effort to understand this variation, researchers recorded the number of prey an individual caught, its age, whether it was foraging in open or closed habitat and how it spent the majority of it’s time (as a single individual, in a pair or in a group of many). The data are in <a href="../data/prey.txt">prey.txt</a> and comprise following variables:</p>
+<p>This example considers the effects of age and group size on the ability of birds to catch insects. The number of insect prey individuals of a particular bird species manages to collect varies. In an effort to understand this variation, researchers recorded the number of prey an individual caught, its age and how it spent the majority of it’s time (as a single individual, in a pair or in a group of many). The data are in <a href="../data/prey.txt">prey.txt</a> and comprise following variables:</p>
 <ul>
 <li>prey : the number of insect prey items caught</li>
 <li>age : the individual’s age in years (to one tenth of a year)</li>
 <li>group : how the individual spent the majority of its time; a factor with three levels “many”, “pair”, “single”</li>
-<li>habitat : a factor with 2 levels “closed”, “open”</li>
 </ul>
 <p>The goal of analysis was to determine if the number of prey items caught could be explained by age, habitat and group.</p>
 </div>
