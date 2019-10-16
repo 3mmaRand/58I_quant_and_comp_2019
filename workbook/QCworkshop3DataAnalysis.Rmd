@@ -13,7 +13,16 @@ output:
 ---
 ![](../pics/58I.png)
 
-  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      include = FALSE)
+```
+
+```{r pkgs}
+library(ggplot2)
+```  
 
 # Introduction
 
@@ -29,12 +38,8 @@ By actively following the first lecture, working through workbook examples durin
 
 You can optionally stretch yourself by asking for more in-depth explanations about the meaning of the estimates, and the direction and magnitude of the effects or creating figures to go with your analyses. Biomedical Scientists might be particularly interested in binomial glm estimates ('odds ratios').
 
-# Prior Independent Learning
 
-
-# Workbook
-
-## About the Workbook
+# Workbook Instructions
 
 The workbook for this session is divided in to 2 sections. 
 
@@ -42,10 +47,15 @@ The workbook for this session is divided in to 2 sections.
 
 Choose **one** from each section that best matches your biological interests. For each example you choose, you should:
 
-* read in the data file, check you know the structure and can identify the response and explanatory variables
-* build a model with glm() using examples on the slides
-* examine the model with summary() and anova()
-* interpret the results
+* write comments in your scripts!
+* read in the data file
+* check you understand the structure of the data
+* identify the response and explanatory variables
+* build a model with `glm()`
+* examine the model result using `summary()` and `anova()`
+* what are the model estimates?
+* interpret the results - you might find it helpful to use `predict()`  
+* use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
 
 Optional Extension: Practice your plotting skills.
 
@@ -64,39 +74,81 @@ Suzuki et al. (2006) measured sand grain size on 28 beaches in Japan and observe
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
 # The effect of sand grain size on the presence of wolf spiders
-#read in file
-grainsize <- read.table("../data/grainsize.txt",header=T)
+
+# read in the data file
+grainsize <- read.table("../data/grainsize.txt", header = T)
+# check you understand the structure of the data
 str(grainsize)
-#build and examine model. binary outcome so it is binomial
-mod <- glm(spiders ~ gsize,family = binomial, data = grainsize)
-summary(mod) 
-#the probability of spiders being present increases with sand grainsize
-anova(mod, test="Chisq")
-#there is a signifcant reduction in deviance when gsize is included as an explanatory variable
-exp(mod$coef)
-# to understand the results a bit better we can get the predict probabilities of advanced amd using
-#probabilites for gsize from 0 to 1 in steps of 0.1
-newdat <- data.frame(gsize = seq(0,1,0.1))
+# it has 28 observations and 2 variable, one is a factor, the other a number
+
+# identify the response and explanatory variables
+# the response is 'spiders' a binary variable that indicates 
+# whether a spider is present or not; gsize is the explanatory variable
+
+# build a model with `glm()`
+# binary outcome so it is binomial
+mod <- glm(data = grainsize, spiders ~ gsize, family = binomial)
+
+
+
+# examine the model result using `summary()` and `anova()`
+# what are the model estimates?
+summary(mod)
+anova(mod, test = "Chisq")
+levels(grainsize$spiders) # tells us what the intercept relates to (first level)
+# the intercept is the log odds of spiders being present over absent when grainsize is zero
+# that it is negative means the odds are less than 1 which means the probability of present is less than the probability of not being present at grain size of zero
+# the 'slope' is the change in log odds of spiders being present over absent with each unit of grainsize
+# that it is positive means odds of being present increase
+# this model explains a significant amount of variation in the presence of spiders
+
+# interpret the results - you might find it helpful to use `predict()`
+
+exp(mod$coefficients)  # antilogs so the intercept odds of spiders being present over absent when grainsize is zero 
+
+# odds can be tricky!
+newdat <- data.frame(gsize = seq(0, 1))
 newdat
 newdat$pr <- predict(mod, type = "response", newdata = newdat)
 newdat
+# the probability of a spider being present when grain size is 0 is 0.1614302
+# the probability of a spider being not present when grain size is 0 is 1 - 0.1614302
+# thus the odds of being present over absent are 0.1614302/(1-0.1614302) = 0.1925066
+# 0.1925066 is exp(mod$coefficients[1])
 
-#this allows us to see how the probability of spiders being present increases with grain size.
-#note the the odds ratio seems huge because it is comparing odds at grain sizes of zero and 1 (i.e., per unit)
+# the probability of a spider being present when grain size is 1 is 0.9699368
+# the probability of a spider being not present when grain size is 1 is 1 - 0.9699368
+# thus the odds of being present over absent are 0.9699368/(1 - 0.9699368) = 32.26326
+# the odds of being present at grainsize of 1 over at grainsize of 0 are 32.26326/0.1925066 = 167.5956
+# 167.5954 is exp(mod$coefficients[2])
 
-#(0.9699368/(1-0.9699368))/(0.1614302/(1-0.1614302)) advanced for ref
-# plotting for ref
-library(ggplot2)
-grainsize$spiders<-as.numeric(grainsize$spiders)-1
-
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
+plot(mod, which = 1)
+plot(mod, which = 2)
+# Optional Extension: Practice your plotting skills.
 ggplot(grainsize, aes(x = gsize, y = spiders))+
+  geom_point()
+# this will give us a plot but in order to get a line for the binomial
+# model on it, we need to do some jiggerypokery
+# the spiders needs to be a numeric.
+# just using as.numeric() will return the interval factor levels of 1 and 2
+# for absent and present respectively
+# but we need values of 0 and 1 (as they represent probability of presence
+# in the model) so we subtract 1
+
+grainsize$spiders2 <- as.numeric(grainsize$spiders) - 1
+
+ggplot(grainsize, aes(x = gsize, y = spiders2))+
   geom_point() +
-  stat_smooth(method = "glm", method.args = list(family = "binomial"),
-  col="black",se=FALSE)
+  stat_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              se = FALSE) +
+  xlim(0, 1.2) +
+  xlab("Grain size (mm)") +
+  ylab("Probability of Spiders being present") +
+  theme_classic()
+# a grain size of roughly 0.3 is when it becomes more likely for spiders to be present than absent
 
-
-#important: latest versions of ggplot you need method.args = list(family = "binomial")
-#older versions of ggplot just family = "binomial"
 ```
 
 
@@ -113,29 +165,68 @@ Thirty men aged 55 years and over were survey for their alcohol consumption then
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
-# The effect of sand grain size on the presence of wolf spiders
-#read in file
-oesoph <- read.table("../data/oesoph.txt",header=T)
+# The effect alcohol consumption on the occurrence of oesophageal cancer
+# read in the data file
+oesoph <- read.table("../data/oesoph.txt", header = T)
+# check you understand the structure of the data
 str(oesoph)
-#build and examine model. binary outcome so it is binomial
-mod <- glm( status ~ alcohol, data = oesoph,family="binomial")
-summary(mod)
-#the probability of oesophageal cancer increases with alcohol
-anova(mod, test="Chisq")
-#there is a signifcant reduction in deviance when alcohol is included as an explanatory variable
-exp(mod$coef)
-# to understand the results a bit better we can get the predicted probabilities oesophageal cancer increases using predict()
-#probabilites for alcohol from 0 to 80 in steps of 10
-newdat<-data.frame(alcohol=seq(0,80,10))
-newdat
-newdat$pr<-predict(mod,type="response",newdata=newdat)
-newdat
-#this allows us to see how the probability increases with alcohol.
+# it has 30 observations and 2 variable, one is an integer, the other a number
 
-#advanced for ref
-(0.006795236/(1-0.006795236)) # intercept
-(0.015739186/(1-0.015739186)) /(0.006795236/(1-0.006795236)) #slope^10 as odds are fat 0 and 10 grrams and slope is 0 to 1 grams
-1.088605775^10
+# identify the response and explanatory variables
+# the response is 'status' a binary variable that indicates 
+# whether an individual has  oesophageal cancer or not; alcohol is the explanatory variable
+
+# build a model with `glm()`
+# binary outcome so it is binomial
+mod <- glm(data = oesoph, status ~ alcohol, family = binomial)
+
+
+# examine the model result using `summary()` and `anova()`
+# what are the model estimates?
+summary(mod)
+anova(mod, test = "Chisq")
+# the response is already 0 and 1
+# the intercept is the log odds of having cancer over not having cancer when alcohol is zero
+# that it is negative means the odds are less than 1 which means the probability of having cancer is less than the probability of not having cancer at alcohol of zero
+# the 'slope' is the change in log odds of having cancer over not having cancer with each unit of alcohol
+# that it is positive means odds of having cancer increase
+# this model explains a significant amount of variation in having cancer
+
+# interpret the results - you might find it helpful to use `predict()`
+
+exp(mod$coefficients)  # antilogs so the intercept odds of having cancer over not having cancer when alcohol is zero 
+
+# odds can be tricky!
+newdat <- data.frame(alcohol = seq(0, 1))
+newdat
+newdat$pr <- predict(mod, type = "response", newdata = newdat)
+newdat
+# the probability of having cancer when alcohol is 0 is 0.006795236
+# the probability of not having cancer when alcohol is 0 is 1 - 0.006795236
+# thus the odds of having cancer over not having cancer are 0.006795236/(1 - 0.006795236) = 0.006841727
+# 0.006841727 is exp(mod$coefficients[1])
+
+# the probability of having cancer when alcohol is 1 is 0.007392882
+# the probability of not having cancer when alcohol is 1 is 1 - 0.007392882
+# thus the odds of having cancer over not having cancer are 0.007392882/(1 - 0.007392882) = 0.007447944
+# the odds of having cancer at alcohol of 1 over at alcohol of 0 are 0.007447944/0.006795236 = 1.096054
+# 1.096054 is exp(mod$coefficients[2])
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
+plot(mod, which = 1)
+plot(mod, which = 2)
+# Optional Extension: Practice your plotting skills.
+# we already have values of 0 and 1 
+
+ggplot(oesoph, aes(x = alcohol, y = status))+
+  geom_point() +
+  stat_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              se = FALSE) +
+  xlab("Units of alcohol") +
+  ylab("Probability having cancer") +
+  theme_classic()
+
 ```
 
 ## Section 2
@@ -158,6 +249,67 @@ Each row is an individual
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 # The Progression of moderate age-related macular degeneration to advanced AMD
 # read in file
+oesoph <- read.table("../data/oesoph.txt", header = T)
+# check you understand the structure of the data
+str(oesoph)
+# it has 30 observations and 2 variable, one is an integer, the other a number
+
+# identify the response and explanatory variables
+# the response is 'status' a binary variable that indicates 
+# whether an individual has  oesophageal cancer or not; alcohol is the explanatory variable
+
+# build a model with `glm()`
+# binary outcome so it is binomial
+mod <- glm(data = oesoph, status ~ alcohol, family = binomial)
+
+
+# examine the model result using `summary()` and `anova()`
+# what are the model estimates?
+summary(mod)
+anova(mod, test = "Chisq")
+# the response is already 0 and 1
+# the intercept is the log odds of having cancer over not having cancer when alcohol is zero
+# that it is negative means the odds are less than 1 which means the probability of having cancer is less than the probability of not having cancer at alcohol of zero
+# the 'slope' is the change in log odds of having cancer over not having cancer with each unit of alcohol
+# that it is positive means odds of having cancer increase
+# this model explains a significant amount of variation in having cancer
+
+# interpret the results - you might find it helpful to use `predict()`
+
+exp(mod$coefficients)  # antilogs so the intercept odds of having cancer over not having cancer when alcohol is zero 
+
+# odds can be tricky!
+newdat <- data.frame(alcohol = seq(0, 1))
+newdat
+newdat$pr <- predict(mod, type = "response", newdata = newdat)
+newdat
+# the probability of having cancer when alcohol is 0 is 0.006795236
+# the probability of not having cancer when alcohol is 0 is 1 - 0.006795236
+# thus the odds of having cancer over not having cancer are 0.006795236/(1 - 0.006795236) = 0.006841727
+# 0.006841727 is exp(mod$coefficients[1])
+
+# the probability of having cancer when alcohol is 1 is 0.007392882
+# the probability of not having cancer when alcohol is 1 is 1 - 0.007392882
+# thus the odds of having cancer over not having cancer are 0.007392882/(1 - 0.007392882) = 0.007447944
+# the odds of having cancer at alcohol of 1 over at alcohol of 0 are 0.007447944/0.006795236 = 1.096054
+# 1.096054 is exp(mod$coefficients[2])
+
+# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
+plot(mod, which = 1)
+plot(mod, which = 2)
+# Optional Extension: Practice your plotting skills.
+# we already have values of 0 and 1 
+
+ggplot(oesoph, aes(x = alcohol, y = status))+
+  geom_point() +
+  stat_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              se = FALSE) +
+  xlab("Units of alcohol") +
+  ylab("Probability having cancer") +
+  theme_classic()
+
+
 amd <- read.table("../data/amd.txt",header=T)
 str(amd)
 
