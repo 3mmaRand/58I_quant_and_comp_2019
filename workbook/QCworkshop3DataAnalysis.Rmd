@@ -248,95 +248,80 @@ Each row is an individual
 
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 # The Progression of moderate age-related macular degeneration to advanced AMD
-# read in file
-oesoph <- read.table("../data/oesoph.txt", header = T)
+
+
+
+# person’s genotype, their refined carbohydrate intake and whether 
+# they developed advanced AMD
+
+# read in the data file
+amd <- read.table("data/amd.txt", header = T)
 # check you understand the structure of the data
-str(oesoph)
-# it has 30 observations and 2 variable, one is an integer, the other a number
+str(amd)
+# it has 53 observations and 3 variables, one is a factor, 
+# one is a binomial (0 or 1) and the last is continuous
 
 # identify the response and explanatory variables
-# the response is 'status' a binary variable that indicates 
-# whether an individual has  oesophageal cancer or not; alcohol is the explanatory variable
+# the response is 'aamd' a binary variable that indicates 
+# whether a person is developed advance age-related
+# macular degeneration.
+# a person's allele and their highly refined carbohydrate
+# intake are explanatory variables 
 
 # build a model with `glm()`
 # binary outcome so it is binomial
-mod <- glm(data = oesoph, status ~ alcohol, family = binomial)
+mod <- glm(data = amd, aamd ~ alleles * HRC, family = binomial)
+
 
 
 # examine the model result using `summary()` and `anova()`
 # what are the model estimates?
 summary(mod)
 anova(mod, test = "Chisq")
-# the response is already 0 and 1
-# the intercept is the log odds of having cancer over not having cancer when alcohol is zero
-# that it is negative means the odds are less than 1 which means the probability of having cancer is less than the probability of not having cancer at alcohol of zero
-# the 'slope' is the change in log odds of having cancer over not having cancer with each unit of alcohol
-# that it is positive means odds of having cancer increase
-# this model explains a significant amount of variation in having cancer
+# alleles is siginificant, HRC seems not to be 
+# and that effect is the same for both alleles
+
+levels(amd$alleles) # tells us what the intercept relates to (first level)
+# the intercept is the log odds of getting aamd over
+# not getting it for ARMS2 individuals when HRC is zero
+# that it is negative means the odds are less than 1 which
+# means the probability of having aamd is less than 
+# the probability of not having it for ARMS2 people
+# when HRC is zero.
+# allelesCFH is the log odds of having ammd over 
+# not having it for CFH people vs ARMS2 people
+# when HRC is zero. It's positive so
+# for zero HRC, having a CFH allele increases your 
+# risk relative to ARMS2 people
+# HRC is positive meaning increasing HRC increases risk
+# for ARMS2 people (but not signifcantly)
+# allelesCFH:HRC is positive meaning the increase in risk
+# caused by HRC is greater in CFH people (but not significantly)
 
 # interpret the results - you might find it helpful to use `predict()`
 
-exp(mod$coefficients)  # antilogs so the intercept odds of having cancer over not having cancer when alcohol is zero 
+exp(mod$coefficients)  
 
 # odds can be tricky!
-newdat <- data.frame(alcohol = seq(0, 1))
+newdat <- data.frame(alleles = rep(c("ARMS2", "CFH"), each = 2),
+                     HRC = rep(seq(0, 1), times = 2))
 newdat
 newdat$pr <- predict(mod, type = "response", newdata = newdat)
 newdat
-# the probability of having cancer when alcohol is 0 is 0.006795236
-# the probability of not having cancer when alcohol is 0 is 1 - 0.006795236
-# thus the odds of having cancer over not having cancer are 0.006795236/(1 - 0.006795236) = 0.006841727
-# 0.006841727 is exp(mod$coefficients[1])
 
-# the probability of having cancer when alcohol is 1 is 0.007392882
-# the probability of not having cancer when alcohol is 1 is 1 - 0.007392882
-# thus the odds of having cancer over not having cancer are 0.007392882/(1 - 0.007392882) = 0.007447944
-# the odds of having cancer at alcohol of 1 over at alcohol of 0 are 0.007447944/0.006795236 = 1.096054
-# 1.096054 is exp(mod$coefficients[2])
 
-# use `plot(mod, which = 1)` and `plot(mod, which = 2)` to examine the assumptions
-plot(mod, which = 1)
-plot(mod, which = 2)
+
 # Optional Extension: Practice your plotting skills.
-# we already have values of 0 and 1 
-
-ggplot(oesoph, aes(x = alcohol, y = status))+
+ggplot(amd, aes(x = HRC, y = aamd, colour = alleles))+
   geom_point() +
   stat_smooth(method = "glm",
               method.args = list(family = "binomial"),
-              se = FALSE) +
-  xlab("Units of alcohol") +
-  ylab("Probability having cancer") +
+              se = TRUE) +
+  xlim(0, 1.2) +
+  xlab("HRC") +
+  ylab("Probability developing AAMD") +
   theme_classic()
 
-
-amd <- read.table("../data/amd.txt",header=T)
-str(amd)
-
-#build and examine model. the repsonse is binary so it is binomial
-mod <- glm(data=amd,aamd~ HRC*alleles, family=binomial)
-summary(mod)
-exp(mod$coefficients)
-anova(mod, test="Chisq")
-#there is a sig efect of allele and sig effect of HRC but not interaction between them (so the effect of HRC is the same for both genotypes). As HRC increased risk of advanced amd increases; allele CFH carries a greater risk.
-#since the interaction is not sig we could drop it
-
-#mod2, without interaction
-mod2<-glm(data=amd,aamd~ HRC+alleles, family=binomial)
-anova(mod, mod2,test="Chisq") #confirms it
-summary(mod2)
-anova(mod2, test="Chisq")
-
-# to understand the results a bit better we can get the predict probabilities of advanced amd using
-#probabilites for each allele at HRC of 0, 0.5 and 1.0
-newdat<-data.frame(HRC=rep(seq(0,1,0.5),2),
-   alleles=rep(c("ARMS2","CFH"),each=3))
-newdat
-newdat$pr<-predict(mod2,type="response",newdata=newdat)
-newdat
-#this allows us to see that the risk of advanced amd if quite a bit higher for CFH
-
- 
 ```
 
 
