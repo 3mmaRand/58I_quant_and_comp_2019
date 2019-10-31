@@ -339,26 +339,120 @@ The goal of analysis was to determine if the presence of the micro-organism coul
 ```{r echo=FALSE,results="hide",warning=FALSE,message=FALSE,eval=FALSE}
 #============== WORKBOOK EXAMPLE ==============#
 #Determinants of skin micro-organism presence
-#read in data
+
+# read in the data file
 micro <- read.table("../data/microrg.txt",header=T)
+
+# check you understand the structure of the data
 str(micro)
-#build and examine model. the repsonse is binary so it is binomial
-   mod <- glm(data=micro,presence ~ gender*melanin*age, family=binomial)
-   summary(mod)
-   anova(mod,test="Chisq")
-# interpret the results
-# only gender and melanin are signifcant: the presence of microorganisms seems to be associated with lower melanin and male gender.
-   
-# More advanced: to understand the results a bit better we can get the predicted probabilities of presence for particular melanin and gender
-summary(micro$melanin)   
-newdat<-data.frame(melanin=rep(seq(0,12,2),2),
-           gender=rep(c("male","female"),each=7),
-                   age=mean(micro$age))
+# it has 30 observations and 4 variables, gender is factor
+# with two levels, melanin and age are coninuous and presence 
+# is a binomial (0 or 1) 
+
+# identify the response and explanatory variables
+# the response is 'presence' a binary variable that indicates 
+# whether a person has the microorganism.
+# a person's gender, age and melanin are the explanatory
+# variables
+
+# build a model with `glm()`
+# binary outcome so it is binomial
+ mod <- glm(data = micro, presence ~ gender * melanin * age,
+            family = binomial)
+
+
+
+# examine the model result using `summary()` and `anova()`
+# what are the model estimates?
+summary(mod)
+anova(mod, test = "Chisq")
+# alleles is siginificant, HRC seems not to be 
+# and that effect is the same for both alleles
+
+levels(micro$gender) # tells us what the intercept relates to (first level)
+# the deviance test, anova(mod, test = "Chisq") tells us that
+# gender and melanin have an effect but age does not.
+# neither is the effect of melanin different for the
+# two genders (the interaction is NS)
+
+# the intercept is the log odds of having the microorganism over
+# not having it for females when Age is zero and melanin is zero.
+# That it is positive means the odds are greater than 1 which
+# means the probability of having the microorganism is greater than 
+# the probability of not having it for females aged 0 with no melanin.
+# gendermale is the log odds of having the mirooganism over 
+# not having it for males vs females when age and melanin
+# are zero. It's positive so being male increases the 
+# probability relative to females (significantly).
+# melanin is negative meaning increasing melanin decreases the
+# probability of having the microorganism for females (significantly).
+# age is positive meaning increasing age icreases the
+# probability of having the microorganism for females (but not siginfcantly)
+# gendermale:melanin is negative the effct of increasing melanin
+# in males is more negative in males than it was in females.
+
+# interpret the results - you might find it helpful to use `predict()`
+
+exp(mod$coefficients)  
+
+# odds can be tricky!
+# I'm going to make predictions for a range of melanin values for
+# males and females of average age
+newdat <- data.frame(melanin  =rep(seq(0, 12, 2),2),
+           gender = rep(c("male","female"), each = 7),
+                   age = mean(micro$age))
 newdat
-newdat$pr<-predict(mod,type="response",newdata=newdat)
+newdat$pr <- predict(mod, type = "response", newdata = newdat)
 newdat
-#this allows us to see that the probabilities of presence are higher for low melanin at average age
-   #in reality we would likely simplify the model starting with removing the three-way interaction
+
+# this allows us to see that the probabilities of presence are higher for low melanin at average age
+# if I was modelling this I would likely simplify the model starting with removing the three-way interaction. This is not something taught but might interest some.
+mod2 <- update(mod, ~. -gender:melanin:age)
+# then compare the two models
+anova(mod, mod2, test = "Chisq")
+# this model is not siginfcantely worse than the full model in
+# explaining the presence of microorganisms
+anova(mod2, test = "Chisq")
+summary(mod2)
+# it looks like we could also drop at least some of the two-way interactions
+# I'll start with melanin and age
+mod3 <- update(mod2, ~. -melanin:age)
+# then compare the two models
+anova(mod2, mod3, test = "Chisq")
+# mod3 is not worse than mod2
+anova(mod3, test = "Chisq")
+# let's drop gender:age too
+mod4 <- update(mod3, ~. -gender:age)
+anova(mod3, mod4, test = "Chisq")
+# mod4 is not worse than mod3
+# let's drop gender:melanin too
+mod5 <- update(mod4, ~. -gender:melanin)
+anova(mod4, mod5, test = "Chisq")
+# still no worse
+anova(mod5, test = "Chisq")
+summary(mod5)
+
+# possibly age could be dropped too but I might stick here as
+# this model is relatively easier to explain. I would report the 
+# results of mod5
+
+# Optional Extension: Practice your plotting skills.
+# you can't get everything on one figure because there
+# are two continuous explanatory variables.
+# Since age doesn't seem to matter we no particular reason
+# to include it in a plot - it isn't going to evidence any of how statistical
+# statements
+ggplot(micro, aes(x = melanin, y = presence, colour = gender))+
+  geom_point() +
+  stat_smooth(method = "glm",
+              method.args = list(family = "binomial"),
+              se = FALSE) +
+#  xlim(0, 1.2) +
+  xlab("Melanin (units)") +
+  ylab("Probability having the microorganism") +
+  theme_classic()
+
+
 ```
 
 
