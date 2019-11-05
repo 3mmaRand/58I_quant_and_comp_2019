@@ -645,6 +645,13 @@ plot(mod2, which = 1)
 shapiro.test(mod2$res)
 #the residuals look just about ok
 
+ggplot(data = resp, aes(x = GSH, y = sens, color = genotype)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  xlim(0, 7) +
+  ylim(0, 40) +
+  theme_classic()
+
 ```
 
 ----------------------------------------
